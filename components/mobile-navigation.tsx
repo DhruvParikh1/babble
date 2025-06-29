@@ -29,7 +29,7 @@ export function MobileNavigation({}: MobileNavigationProps) {
       href: "/dashboard/items",
       label: "My Items",
       icon: List,
-      description: "View your organized notes"
+      description: "View your babbles"
     },
     {
       href: "/dashboard/profile",

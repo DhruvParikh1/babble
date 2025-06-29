@@ -859,7 +859,7 @@ export default function BubbleVoiceRecorder({ userId }: BubbleVoiceRecorderProps
         transition={{ delay: 0.5 }}
       >
         <p className="text-white text-xl font-bold drop-shadow-2xl bg-black/30 px-4 py-2 rounded-lg backdrop-blur-sm border border-white/20">
-          {bubbleState === "idle" && "Tap the bubble to start recording"}
+          {bubbleState === "idle" && "Tap the bubble to babble"}
           {bubbleState === "recording" && "Recording... Speak now"}
           {bubbleState === "processing" && "Processing your voice..."}
           {bubbleState === "popped" && "Pop! Recording complete"}
