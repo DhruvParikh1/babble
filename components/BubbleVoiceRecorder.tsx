@@ -5,38 +5,20 @@ import { motion, AnimatePresence } from "framer-motion"
 
 type BubbleState = "idle" | "recording" | "processing" | "popped"
 
-interface BubbleVoiceRecorderProps {
-  onRecordingStart?: () => void
-  onRecordingComplete?: () => void
-  onProcessingStart?: () => void
-  onProcessingComplete?: () => void
-  className?: string
-}
-
-export default function BubbleVoiceRecorder({
-  onRecordingStart,
-  onRecordingComplete,
-  onProcessingStart,
-  onProcessingComplete,
-  className = ""
-}: BubbleVoiceRecorderProps) {
+export default function Component() {
   const [bubbleState, setBubbleState] = useState<BubbleState>("idle")
 
   const handleBubbleTap = () => {
     if (bubbleState === "idle") {
       setBubbleState("recording")
-      onRecordingStart?.()
 
       // Simulate recording for 2 seconds
       setTimeout(() => {
         setBubbleState("processing")
-        onRecordingComplete?.()
-        onProcessingStart?.()
 
         // Simulate processing for 1.5 seconds, then pop
         setTimeout(() => {
           setBubbleState("popped")
-          onProcessingComplete?.()
 
           // Reset after pop animation
           setTimeout(() => {
@@ -89,7 +71,7 @@ export default function BubbleVoiceRecorder({
 
   return (
     <div
-      className={`flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-400 via-blue-300 to-blue-200 overflow-hidden ${className}`}
+      className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-400 via-blue-300 to-blue-200 overflow-hidden"
       style={{ perspective: "1200px" }}
     >
       <AnimatePresence>
@@ -113,10 +95,10 @@ export default function BubbleVoiceRecorder({
               rotateX: [0, 45],
               rotateY: [0, 90],
               transition: {
-                type: "tween",
                 duration: 0.3,
                 ease: "easeOut",
-              },
+                type: "tween", // Use tween for multiple keyframes in exit
+              }
             }}
             transition={{
               scale: {
@@ -126,17 +108,17 @@ export default function BubbleVoiceRecorder({
               },
               y: {
                 duration: 2.5,
-                repeat: Infinity,
+                repeat: Number.POSITIVE_INFINITY,
                 ease: "easeInOut",
               },
               rotateX: {
                 duration: 10,
-                repeat: Infinity,
+                repeat: Number.POSITIVE_INFINITY,
                 ease: "easeInOut",
               },
               rotateY: {
                 duration: 8,
-                repeat: Infinity,
+                repeat: Number.POSITIVE_INFINITY,
                 ease: "easeInOut",
               },
             }}
@@ -164,17 +146,17 @@ export default function BubbleVoiceRecorder({
               transition={{
                 scale: {
                   duration: 3,
-                  repeat: Infinity,
+                  repeat: Number.POSITIVE_INFINITY,
                   ease: "easeInOut",
                 },
                 opacity: {
                   duration: 2,
-                  repeat: Infinity,
+                  repeat: Number.POSITIVE_INFINITY,
                   ease: "easeInOut",
                 },
                 rotate: {
                   duration: 20,
-                  repeat: Infinity,
+                  repeat: Number.POSITIVE_INFINITY,
                   ease: "linear",
                 },
               }}
@@ -209,17 +191,17 @@ export default function BubbleVoiceRecorder({
                 transition={{
                   borderRadius: {
                     duration: 6,
-                    repeat: Infinity,
+                    repeat: Number.POSITIVE_INFINITY,
                     ease: "easeInOut",
                   },
                   scaleX: {
                     duration: 4,
-                    repeat: Infinity,
+                    repeat: Number.POSITIVE_INFINITY,
                     ease: "easeInOut",
                   },
                   scaleY: {
                     duration: 5,
-                    repeat: Infinity,
+                    repeat: Number.POSITIVE_INFINITY,
                     ease: "easeInOut",
                   },
                 }}
@@ -229,7 +211,7 @@ export default function BubbleVoiceRecorder({
                   className="absolute inset-0 opacity-60"
                   style={{
                     background: `
-                      conic-gradient(from 0deg,
+                      conic-gradient(from var(--rotation, 0deg),
                         rgba(255, 182, 193, 0.5) 0deg,
                         rgba(255, 192, 203, 0.4) 45deg,
                         rgba(255, 228, 225, 0.4) 90deg,
@@ -253,7 +235,7 @@ export default function BubbleVoiceRecorder({
                     transform: "translateZ(1px)",
                   }}
                   animate={{
-                    rotate: [0, 360],
+                    "--rotation": ["0deg", "360deg"],
                     borderRadius: [
                       "60% 40% 30% 70% / 60% 30% 70% 40%",
                       "30% 60% 70% 40% / 50% 60% 30% 60%",
@@ -261,16 +243,16 @@ export default function BubbleVoiceRecorder({
                       "40% 60% 50% 60% / 70% 40% 50% 30%",
                       "60% 40% 30% 70% / 60% 30% 70% 40%",
                     ],
-                  }}
+                  } satisfies Record<string, string | string[]>}
                   transition={{
-                    rotate: {
+                    "--rotation": {
                       duration: 15,
-                      repeat: Infinity,
+                      repeat: Number.POSITIVE_INFINITY,
                       ease: "linear",
                     },
                     borderRadius: {
                       duration: 6,
-                      repeat: Infinity,
+                      repeat: Number.POSITIVE_INFINITY,
                       ease: "easeInOut",
                     },
                   }}
@@ -281,7 +263,7 @@ export default function BubbleVoiceRecorder({
                   className="absolute inset-0 opacity-40"
                   style={{
                     background: `
-                      conic-gradient(from 180deg,
+                      conic-gradient(from var(--rotation2, 180deg),
                         rgba(255, 240, 245, 0.35) 0deg,
                         rgba(255, 228, 225, 0.3) 60deg,
                         rgba(255, 228, 225, 0.3) 120deg,
@@ -303,7 +285,7 @@ export default function BubbleVoiceRecorder({
                     transform: "translateZ(2px)",
                   }}
                   animate={{
-                    rotate: [180, -180],
+                    "--rotation2": ["180deg", "-180deg"],
                     borderRadius: [
                       "60% 40% 30% 70% / 60% 30% 70% 40%",
                       "30% 60% 70% 40% / 50% 60% 30% 60%",
@@ -311,16 +293,16 @@ export default function BubbleVoiceRecorder({
                       "40% 60% 50% 60% / 70% 40% 50% 30%",
                       "60% 40% 30% 70% / 60% 30% 70% 40%",
                     ],
-                  }}
+                  } satisfies Record<string, string | string[]>}
                   transition={{
-                    rotate: {
+                    "--rotation2": {
                       duration: 12,
-                      repeat: Infinity,
+                      repeat: Number.POSITIVE_INFINITY,
                       ease: "linear",
                     },
                     borderRadius: {
                       duration: 6,
-                      repeat: Infinity,
+                      repeat: Number.POSITIVE_INFINITY,
                       ease: "easeInOut",
                     },
                   }}
@@ -331,7 +313,7 @@ export default function BubbleVoiceRecorder({
                   className="absolute inset-0 opacity-25"
                   style={{
                     background: `
-                      radial-gradient(circle at 30% 40%, 
+                      radial-gradient(circle at var(--glow-x, 30%) var(--glow-y, 40%), 
                         rgba(255, 182, 193, 0.2) 0%, 
                         rgba(255, 192, 203, 0.15) 25%, 
                         rgba(255, 228, 225, 0.1) 40%,
@@ -342,7 +324,8 @@ export default function BubbleVoiceRecorder({
                     transform: "translateZ(3px)",
                   }}
                   animate={{
-                    backgroundPosition: ["20% 30%", "80% 70%", "40% 50%", "60% 20%", "20% 30%"],
+                    "--glow-x": ["20%", "80%", "40%", "60%", "20%"],
+                    "--glow-y": ["30%", "70%", "50%", "20%", "30%"],
                     borderRadius: [
                       "60% 40% 30% 70% / 60% 30% 70% 40%",
                       "30% 60% 70% 40% / 50% 60% 30% 60%",
@@ -350,10 +333,10 @@ export default function BubbleVoiceRecorder({
                       "40% 60% 50% 60% / 70% 40% 50% 30%",
                       "60% 40% 30% 70% / 60% 30% 70% 40%",
                     ],
-                  }}
+                  } satisfies Record<string, string | string[]>}
                   transition={{
                     duration: 8,
-                    repeat: Infinity,
+                    repeat: Number.POSITIVE_INFINITY,
                     ease: "easeInOut",
                   }}
                 />
@@ -363,7 +346,7 @@ export default function BubbleVoiceRecorder({
                   className="absolute inset-0 opacity-30"
                   style={{
                     background: `
-                      radial-gradient(ellipse at 70% 30%, 
+                      radial-gradient(ellipse at var(--accent-x, 70%) var(--accent-y, 30%), 
                         rgba(255, 192, 203, 0.2) 0%, 
                         rgba(255, 182, 193, 0.15) 30%, 
                         rgba(255, 228, 225, 0.1) 50%, 
@@ -373,7 +356,8 @@ export default function BubbleVoiceRecorder({
                     transform: "translateZ(3.5px)",
                   }}
                   animate={{
-                    backgroundPosition: ["60% 20%", "20% 80%", "80% 30%", "40% 70%", "60% 20%"],
+                    "--accent-x": ["60%", "20%", "80%", "40%", "60%"],
+                    "--accent-y": ["20%", "80%", "30%", "70%", "20%"],
                     borderRadius: [
                       "60% 40% 30% 70% / 60% 30% 70% 40%",
                       "30% 60% 70% 40% / 50% 60% 30% 60%",
@@ -381,10 +365,10 @@ export default function BubbleVoiceRecorder({
                       "40% 60% 50% 60% / 70% 40% 50% 30%",
                       "60% 40% 30% 70% / 60% 30% 70% 40%",
                     ],
-                  }}
+                  } satisfies Record<string, string | string[]>}
                   transition={{
                     duration: 6,
-                    repeat: Infinity,
+                    repeat: Number.POSITIVE_INFINITY,
                     ease: "easeInOut",
                     delay: 1,
                   }}
@@ -394,7 +378,7 @@ export default function BubbleVoiceRecorder({
                 <motion.div
                   className="absolute inset-0"
                   style={{
-                    background: `radial-gradient(ellipse at 20% 20%, 
+                    background: `radial-gradient(ellipse at var(--x, 20%) var(--y, 20%), 
                       rgba(255, 255, 255, 1) 0%,
                       rgba(255, 255, 255, 0.8) 8%,
                       rgba(255, 255, 255, 0.4) 20%,
@@ -404,7 +388,8 @@ export default function BubbleVoiceRecorder({
                     transform: "translateZ(5px)",
                   }}
                   animate={{
-                    backgroundPosition: ["15% 15%", "85% 80%", "30% 35%", "70% 90%", "15% 15%"],
+                    "--x": ["15%", "85%", "30%", "70%", "15%"],
+                    "--y": ["15%", "80%", "35%", "90%", "15%"],
                     borderRadius: [
                       "60% 40% 30% 70% / 60% 30% 70% 40%",
                       "30% 60% 70% 40% / 50% 60% 30% 60%",
@@ -412,10 +397,10 @@ export default function BubbleVoiceRecorder({
                       "40% 60% 50% 60% / 70% 40% 50% 30%",
                       "60% 40% 30% 70% / 60% 30% 70% 40%",
                     ],
-                  }}
+                  } satisfies Record<string, string | string[]>}
                   transition={{
                     duration: 5,
-                    repeat: Infinity,
+                    repeat: Number.POSITIVE_INFINITY,
                     ease: "easeInOut",
                   }}
                 />
@@ -434,7 +419,7 @@ export default function BubbleVoiceRecorder({
                   }}
                   transition={{
                     duration: 2,
-                    repeat: Infinity,
+                    repeat: Number.POSITIVE_INFINITY,
                     ease: "easeInOut",
                   }}
                 />
@@ -451,7 +436,7 @@ export default function BubbleVoiceRecorder({
                   }}
                   transition={{
                     duration: 3,
-                    repeat: Infinity,
+                    repeat: Number.POSITIVE_INFINITY,
                     ease: "easeInOut",
                     delay: 0.5,
                   }}
