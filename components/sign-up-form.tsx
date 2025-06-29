@@ -167,7 +167,7 @@ export function SignUpForm({
               <Input
                 id="email"
                 type="email"
-                placeholder="hello@reallygreatsite.com"
+                placeholder="hello@babbles.vercel.app"
                 className="bg-white/80 border-0 rounded-xl py-6 text-stone-600 placeholder:text-stone-400"
                 required
                 value={email}
