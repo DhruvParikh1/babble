@@ -1,3 +1,4 @@
+// File: voice-text-note-processor/app/layout.tsx
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import { ThemeProvider } from "next-themes";

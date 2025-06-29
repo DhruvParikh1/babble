@@ -1,3 +1,4 @@
+// File: voice-text-note-processor/app/protected/layout.tsx
 import { AuthButton } from "@/components/auth-button";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import Link from "next/link";
