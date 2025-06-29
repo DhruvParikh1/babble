@@ -116,7 +116,7 @@ export function MobileNavigation({}: MobileNavigationProps) {
                 {/* Header */}
                 <div className="p-6 border-b border-gray-200/50">
                   <h2 className="text-xl font-bold text-gray-800">Menu</h2>
-                  <p className="text-sm text-gray-600 mt-1">Navigate your voice notes app</p>
+                  <p className="text-sm text-gray-600 mt-1">Navigate Babble</p>
                 </div>
 
                 {/* Navigation Items */}
@@ -176,7 +176,7 @@ export function MobileNavigation({}: MobileNavigationProps) {
                 {/* Footer */}
                 <div className="p-4 border-t border-gray-200/50">
                   <div className="text-center">
-                    <p className="text-xs text-gray-500 mb-2">Voice Notes App</p>
+                    <p className="text-xs text-gray-500 mb-2">Babble</p>
                     <Button
                       onClick={() => router.push("/auth/sign-out")}
                       variant="outline"
