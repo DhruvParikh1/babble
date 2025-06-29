@@ -1,4 +1,4 @@
-// File: voice-text-note-processor/app/dashboard/items/page.tsx
+// File: voice-text-note-processor/app/capture/items/page.tsx
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { ProcessedItemsList } from "@/components/processed-items-list";
@@ -25,7 +25,7 @@ export default async function ItemsPage() {
         <div className="flex items-center justify-between p-4 max-w-4xl mx-auto">
           <div className="flex items-center space-x-3">
             <Link
-              href="/dashboard"
+              href="/capture"
               className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors"
             >
               <ArrowLeft className="w-5 h-5 text-gray-600 dark:text-gray-300" />
@@ -52,7 +52,7 @@ export default async function ItemsPage() {
       {/* Floating Action Button */}
       <div className="fixed bottom-6 right-6 z-40">
         <Link
-          href="/dashboard"
+          href="/capture"
           className="group w-14 h-14 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white rounded-full shadow-lg flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 hover:shadow-xl"
           title="Record voice note"
         >

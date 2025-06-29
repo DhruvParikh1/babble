@@ -1,10 +1,10 @@
-// File: voice-text-note-processor/app/dashboard/page.tsx
+// File: voice-text-note-processor/app/capture/page.tsx
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import BubbleVoiceRecorder from "@/components/BubbleVoiceRecorder";
 import { MobileNavigation } from "@/components/mobile-navigation";
 
-export default async function DashboardPage() {
+export default async function CapturePage() {
   const supabase = await createClient();
 
   const { data, error } = await supabase.auth.getUser();

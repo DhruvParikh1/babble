@@ -1,4 +1,4 @@
-// File: voice-text-note-processor/app/dashboard/profile/page.tsx
+// File: voice-text-note-processor/app/capture/profile/page.tsx
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { MobileNavigation } from "@/components/mobile-navigation";
@@ -25,7 +25,7 @@ export default async function ProfilePage() {
         <div className="flex items-center justify-between p-4 max-w-4xl mx-auto">
           <div className="flex items-center space-x-3">
             <Link
-              href="/dashboard"
+              href="/capture"
               className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
             >
               <ArrowLeft className="w-5 h-5 text-gray-600" />

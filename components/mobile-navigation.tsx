@@ -21,25 +21,25 @@ export function MobileNavigation({ variant = 'dark' }: MobileNavigationProps) {
 
   const navItems = [
     {
-      href: "/dashboard",
+      href: "/capture",
       label: "Record",
       icon: Home,
       description: "Voice recording"
     },
     {
-      href: "/dashboard/items",
+      href: "/capture/items",
       label: "My Items",
       icon: List,
       description: "View your babbles"
     },
     {
-      href: "/dashboard/profile",
+      href: "/capture/profile",
       label: "Profile",
       icon: User,
       description: "Account settings"
     },
     {
-      href: "/dashboard/settings",
+      href: "/capture/settings",
       label: "Settings",
       icon: Settings,
       description: "App preferences"

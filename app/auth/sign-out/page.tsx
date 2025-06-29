@@ -183,7 +183,7 @@ export default function SignOutPage() {
             </div>
           </div>
 
-          {/* Back to Dashboard Link */}
+          {/* Back to Main Link */}
           <div className="text-center">
             <Link
               href="/capture"
