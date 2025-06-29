@@ -236,47 +236,6 @@ export default async function ProfilePage() {
           </CardContent>
         </Card>
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-2 gap-4">
-          <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
-            <CardContent className="pt-6">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-blue-600">12</div>
-                <div className="text-sm text-gray-600">Voice Notes</div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="bg-gradient-to-r from-green-50 to-emerald-50 border-green-200">
-            <CardContent className="pt-6">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-green-600">8</div>
-                <div className="text-sm text-gray-600">Completed Tasks</div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Actions */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Account Actions</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <Button variant="outline" className="w-full justify-start">
-              <Mail className="w-4 h-4 mr-2" />
-              Update Password
-            </Button>
-            <Button variant="outline" className="w-full justify-start">
-              <FileText className="w-4 h-4 mr-2" />
-              Export Data
-            </Button>
-            <Button variant="destructive" className="w-full justify-start">
-              <User className="w-4 h-4 mr-2" />
-              Delete Account
-            </Button>
-          </CardContent>
-        </Card>
-
         {/* Enhanced Integrations */}
         <Card>
           <CardHeader>
@@ -360,6 +319,27 @@ export default async function ProfilePage() {
                 </Button>
               </div>
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Actions */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Account Actions</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <Button variant="outline" className="w-full justify-start">
+              <Mail className="w-4 h-4 mr-2" />
+              Update Password
+            </Button>
+            <Button variant="outline" className="w-full justify-start">
+              <FileText className="w-4 h-4 mr-2" />
+              Export Data
+            </Button>
+            <Button variant="destructive" className="w-full justify-start">
+              <User className="w-4 h-4 mr-2" />
+              Delete Account
+            </Button>
           </CardContent>
         </Card>
       </div>
