@@ -1,3 +1,4 @@
+// File: voice-text-note-processor/components/processing-indicator.tsx
 'use client';
 
 import { useState, useEffect } from 'react';

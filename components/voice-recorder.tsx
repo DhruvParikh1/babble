@@ -1,3 +1,4 @@
+// File: voice-text-note-processor/components/voice-recorder.tsx
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
