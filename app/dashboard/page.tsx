@@ -1,3 +1,4 @@
+// File: voice-text-note-processor/app/dashboard/page.tsx
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { VoiceRecorder } from "@/components/voice-recorder";

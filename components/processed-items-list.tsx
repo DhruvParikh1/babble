@@ -1,3 +1,4 @@
+// File: voice-text-note-processor/components/processed-items-list.tsx
 'use client';
 
 import { useState, useEffect } from 'react';

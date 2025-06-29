@@ -1,3 +1,4 @@
+// File: voice-text-note-processor/components/BubbleVoiceRecorder.tsx
 "use client"
 
 import { useState } from "react"

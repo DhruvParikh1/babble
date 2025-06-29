@@ -1,3 +1,4 @@
+// File: voice-text-note-processor/app/protected/page.tsx
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
