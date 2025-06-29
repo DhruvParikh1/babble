@@ -1,33 +1,256 @@
 // File: voice-text-note-processor/components/BubbleVoiceRecorder.tsx
 "use client"
 
-import { useState } from "react"
+import { useState, useRef, useEffect, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
+
+// TypeScript interfaces for Web Speech API
+interface SpeechRecognitionEvent {
+  resultIndex: number;
+  results: SpeechRecognitionResultList;
+}
+
+interface SpeechRecognitionErrorEvent {
+  error: string;
+  message?: string;
+}
+
+interface SpeechRecognition extends EventTarget {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  start(): void;
+  stop(): void;
+  abort(): void;
+  onstart: ((event: Event) => void) | null;
+  onend: ((event: Event) => void) | null;
+  onresult: ((event: SpeechRecognitionEvent) => void) | null;
+  onerror: ((event: SpeechRecognitionErrorEvent) => void) | null;
+}
+
+interface SpeechRecognitionStatic {
+  new(): SpeechRecognition;
+}
+
+declare global {
+  interface Window {
+    SpeechRecognition: SpeechRecognitionStatic;
+    webkitSpeechRecognition: SpeechRecognitionStatic;
+  }
+}
 
 type BubbleState = "idle" | "recording" | "processing" | "popped"
 
-export default function Component() {
+interface BubbleVoiceRecorderProps {
+  userId: string;
+}
+
+export default function BubbleVoiceRecorder({ userId }: BubbleVoiceRecorderProps) {
   const [bubbleState, setBubbleState] = useState<BubbleState>("idle")
+  const [transcript, setTranscript] = useState("")
+  const [error, setError] = useState<string | null>(null)
+  const [isSupported, setIsSupported] = useState(false)
+  
+  const recognitionRef = useRef<SpeechRecognition | null>(null)
+  const finalTranscriptRef = useRef("")
+  const isStoppingRef = useRef(false)
+
+  const processTranscription = useCallback(async (text: string) => {
+    setBubbleState("processing")
+    try {
+      const response = await fetch('/api/process-voice', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          transcript: text,
+          userId: userId,
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to process transcription')
+      }
+
+      const result = await response.json()
+      console.log('Processing result:', result)
+      
+      // Clear the transcript after successful processing
+      setTranscript("")
+      finalTranscriptRef.current = ""
+      
+      // Trigger the pop animation
+      setBubbleState("popped")
+      
+      // Trigger a refresh of the processed items list
+      window.dispatchEvent(new CustomEvent('refreshProcessedItems'))
+      
+      // Reset after pop animation
+      setTimeout(() => {
+        setBubbleState("idle")
+      }, 2500)
+      
+    } catch (error) {
+      console.error('Error processing transcription:', error)
+      setError('Failed to process your voice note')
+      
+      // Auto-hide error and reset after 3 seconds
+      setTimeout(() => {
+        setError(null)
+        setBubbleState("idle")
+      }, 3000)
+    }
+  }, [userId])
+
+  const recreateRecognition = useCallback(() => {
+    const SpeechRecognition = 
+      window.SpeechRecognition || 
+      window.webkitSpeechRecognition
+    
+    if (SpeechRecognition) {
+      // Destroy old instance
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.abort()
+        } catch {
+          // Ignore errors when aborting
+        }
+      }
+      
+      // Create new instance
+      recognitionRef.current = new SpeechRecognition()
+      const recognition = recognitionRef.current
+      recognition.continuous = false
+      recognition.interimResults = true
+      recognition.lang = 'en-US'
+
+      // Attach event handlers
+      recognition.onstart = () => {
+        console.log('Speech recognition started')
+        setBubbleState("recording")
+        setError(null)
+        finalTranscriptRef.current = ""
+        setTranscript("")
+        isStoppingRef.current = false
+      }
+
+      recognition.onresult = (event: SpeechRecognitionEvent) => {
+        let interimTranscript = ""
+        let finalTranscript = finalTranscriptRef.current
+
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const transcript = event.results[i][0].transcript
+          if (event.results[i].isFinal) {
+            finalTranscript += transcript
+          } else {
+            interimTranscript += transcript
+          }
+        }
+
+        finalTranscriptRef.current = finalTranscript
+        setTranscript(finalTranscript + interimTranscript)
+      }
+
+      recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
+        console.error('Speech recognition error:', event.error)
+        
+        if (event.error !== 'aborted') {
+          setError(`Speech recognition error: ${event.error}`)
+        }
+        
+        setBubbleState("idle")
+        isStoppingRef.current = false
+      }
+
+      recognition.onend = () => {
+        console.log('Speech recognition ended')
+        
+        if (!isStoppingRef.current) {
+          if (finalTranscriptRef.current.trim()) {
+            processTranscription(finalTranscriptRef.current.trim())
+          } else {
+            setBubbleState("idle")
+          }
+        }
+      }
+    }
+  }, [processTranscription])
+
+  useEffect(() => {
+    // Check if speech recognition is supported
+    const SpeechRecognition = 
+      window.SpeechRecognition || 
+      window.webkitSpeechRecognition
+    
+    if (SpeechRecognition) {
+      setIsSupported(true)
+      recreateRecognition()
+    } else {
+      setError('Speech recognition is not supported in this browser')
+    }
+
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.abort()
+      }
+    }
+  }, [recreateRecognition])
 
   const handleBubbleTap = () => {
-    if (bubbleState === "idle") {
-      setBubbleState("recording")
-
-      // Simulate recording for 2 seconds
-      setTimeout(() => {
-        setBubbleState("processing")
-
-        // Simulate processing for 1.5 seconds, then pop
-        setTimeout(() => {
-          setBubbleState("popped")
-
-          // Reset after pop animation
-          setTimeout(() => {
-            setBubbleState("idle")
-          }, 2500)
-        }, 1500)
-      }, 2000)
+    if (!isSupported) {
+      setError('Speech recognition not supported')
+      return
     }
+
+    if (bubbleState === "idle") {
+      // Start recording
+      if (recognitionRef.current) {
+        try {
+          console.log('Starting speech recognition...')
+          recognitionRef.current.start()
+        } catch (error) {
+          console.error('Error starting recognition:', error)
+          setError('Failed to start recording')
+        }
+      }
+    } else if (bubbleState === "recording") {
+      // Stop recording
+      if (recognitionRef.current && !isStoppingRef.current) {
+        console.log('Stopping speech recognition...')
+        isStoppingRef.current = true
+        
+        try {
+          // Capture current transcript before stopping
+          const currentTranscript = finalTranscriptRef.current.trim()
+          
+          // Try to abort the current recognition
+          recognitionRef.current.abort()
+          
+          // Reset stopping flag
+          isStoppingRef.current = false
+          
+          // Recreate the recognition instance for next time
+          setTimeout(() => {
+            recreateRecognition()
+          }, 100)
+          
+          // Process transcript if we have any
+          if (currentTranscript) {
+            processTranscription(currentTranscript)
+          } else {
+            setBubbleState("idle")
+          }
+          
+        } catch (error) {
+          console.error('Error stopping recognition:', error)
+          setBubbleState("idle")
+          isStoppingRef.current = false
+          recreateRecognition()
+        }
+      }
+    }
+    // If processing or popped, do nothing (let animations complete)
   }
 
   const getBubbleScale = () => {
@@ -70,16 +293,64 @@ export default function Component() {
     duration: Math.random() * 1 + 2,
   }))
 
+  if (!isSupported) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-400 via-blue-300 to-blue-200">
+        <div className="text-center space-y-4 bg-white/20 backdrop-blur-sm rounded-lg p-8 mx-4">
+          <div className="text-red-600 font-semibold text-lg">
+            Speech recognition is not supported in this browser.
+          </div>
+          <div className="text-white text-sm">
+            Please use Chrome, Safari, or Edge.
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div
-      className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-400 via-blue-300 to-blue-200 overflow-hidden"
+      className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-400 via-blue-300 to-blue-200 overflow-hidden relative"
       style={{ perspective: "1200px" }}
     >
+      {/* Live Transcript Overlay */}
+      <AnimatePresence>
+        {transcript && bubbleState === "recording" && (
+          <motion.div
+            className="absolute top-20 left-4 right-4 z-10"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+          >
+            <div className="bg-white/90 backdrop-blur-sm rounded-lg p-4 shadow-lg">
+              <p className="text-sm font-medium text-gray-700 mb-1">Live Transcript:</p>
+              <p className="text-sm text-gray-600 italic">&quot;{transcript}&quot;</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Error Overlay */}
+      <AnimatePresence>
+        {error && (
+          <motion.div
+            className="absolute top-20 left-4 right-4 z-10"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+          >
+            <div className="bg-red-50/90 backdrop-blur-sm border border-red-200 rounded-lg p-4 shadow-lg">
+              <p className="text-sm text-red-600">{error}</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <AnimatePresence>
         {bubbleState !== "popped" && (
           <motion.button
             onClick={handleBubbleTap}
-            disabled={bubbleState !== "idle"}
+            disabled={bubbleState === "processing"}
             className="relative focus:outline-none"
             style={{ transformStyle: "preserve-3d" }}
             initial={{ scale: 0, opacity: 0, rotateX: 0, rotateY: 0 }}
