@@ -1,4 +1,4 @@
-// File: voice-text-note-processor/lib/openai.ts
+// File: lib/openai.ts
 import { OpenAI } from 'openai';
 
 const openai = new OpenAI({

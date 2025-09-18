@@ -1,4 +1,4 @@
-// File: voice-text-note-processor/app/api/process-voice/route.ts
+// File: app/api/process-voice/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { processVoiceNote } from '@/lib/openai';

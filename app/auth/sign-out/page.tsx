@@ -1,3 +1,4 @@
+// File: app/auth/sign-out/page.tsx
 "use client"
 
 import { useState } from "react"

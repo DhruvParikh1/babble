@@ -1,4 +1,4 @@
-// File: voice-text-note-processor/app/capture/page.tsx
+// File: app/capture/page.tsx
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import BubbleVoiceRecorder from "@/components/BubbleVoiceRecorder";

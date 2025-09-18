@@ -1,4 +1,4 @@
-// File: voice-text-note-processor/app/capture/profile/page.tsx
+// File: app/capture/profile/page.tsx
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { MobileNavigation } from "@/components/mobile-navigation";

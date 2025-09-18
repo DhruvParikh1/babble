@@ -1,3 +1,4 @@
+// File: app/auth/sign-up-success/page.tsx
 "use client";
 
 import { motion } from "framer-motion";

@@ -1,4 +1,4 @@
-// File: voice-text-note-processor/components/BubbleVoiceRecorder.tsx
+// File: components/BubbleVoiceRecorder.tsx
 "use client"
 
 import { useState, useRef, useEffect, useCallback } from "react"

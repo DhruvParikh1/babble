@@ -1,4 +1,4 @@
-// File: voice-text-note-processor/app/page.tsx
+// File: app/page.tsx
 "use client"
 
 import { motion } from "framer-motion"

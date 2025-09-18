@@ -1,3 +1,4 @@
+// File: app/auth/confirm/route.ts
 import { createClient } from "@/lib/supabase/server";
 import { type EmailOtpType } from "@supabase/supabase-js";
 import { redirect } from "next/navigation";

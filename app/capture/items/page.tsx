@@ -1,4 +1,4 @@
-// File: voice-text-note-processor/app/capture/items/page.tsx
+// File: app/capture/items/page.tsx
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { ProcessedItemsList } from "@/components/processed-items-list";

@@ -1,7 +1,7 @@
-// File: voice-text-note-processor/components/processed-items-list.tsx
+// File: components/processed-items-list.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -40,6 +40,23 @@ interface ProcessedItemsListProps {
   userId: string;
 }
 
+const categoryColors: Record<string, string> = {
+  'Health': 'bg-red-500',
+  'Medical': 'bg-red-500',
+  'Work': 'bg-blue-500',
+  'Shopping': 'bg-green-500',
+  'Groceries': 'bg-green-500',
+  'Family': 'bg-purple-500',
+  'Personal': 'bg-indigo-500',
+  'Finance': 'bg-yellow-500',
+  'Appointments': 'bg-orange-500',
+  'General': 'bg-gray-500'
+};
+
+const getColorForCategory = (categoryName: string): string => {
+  return categoryColors[categoryName] || 'bg-slate-500';
+};
+
 export function ProcessedItemsList({ userId }: ProcessedItemsListProps) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [activeCategory, setActiveCategory] = useState<string>('all');
@@ -50,24 +67,7 @@ export function ProcessedItemsList({ userId }: ProcessedItemsListProps) {
 
   const supabase = createClient();
 
-  const categoryColors: Record<string, string> = {
-    'Health': 'bg-red-500',
-    'Medical': 'bg-red-500',
-    'Work': 'bg-blue-500',
-    'Shopping': 'bg-green-500',
-    'Groceries': 'bg-green-500',
-    'Family': 'bg-purple-500',
-    'Personal': 'bg-indigo-500',
-    'Finance': 'bg-yellow-500',
-    'Appointments': 'bg-orange-500',
-    'General': 'bg-gray-500'
-  };
-
-  const getColorForCategory = (categoryName: string): string => {
-    return categoryColors[categoryName] || 'bg-slate-500';
-  };
-
-  const fetchItems = async () => {
+  const fetchItems = useCallback(async () => {
     try {
       setLoading(true);
       const { data, error } = await supabase
@@ -127,7 +127,7 @@ export function ProcessedItemsList({ userId }: ProcessedItemsListProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [supabase, userId]);
 
   useEffect(() => {
     fetchItems();
@@ -141,7 +141,7 @@ export function ProcessedItemsList({ userId }: ProcessedItemsListProps) {
     return () => {
       window.removeEventListener('refreshProcessedItems', handleRefresh);
     };
-  }, [userId]);
+  }, [userId, fetchItems]);
 
   const toggleCompleted = async (itemId: string, completed: boolean) => {
     try {

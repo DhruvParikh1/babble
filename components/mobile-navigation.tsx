@@ -1,4 +1,4 @@
-// File: voice-text-note-processor/components/mobile-navigation.tsx
+// File: components/mobile-navigation.tsx
 "use client"
 
 import { useState } from "react"

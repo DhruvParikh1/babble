@@ -1,4 +1,4 @@
-// File: voice-text-note-processor/types/database.ts
+// File: types/database.ts
 export type Database = {
   public: {
     Tables: {
