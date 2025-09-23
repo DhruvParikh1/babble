@@ -1,5 +1,7 @@
 // File: lib/google-calendar.ts
 import { google } from 'googleapis';
+import type { OAuth2Client } from 'google-auth-library';
+import type { calendar_v3 } from 'googleapis';
 import { createClient } from '@/lib/supabase/server';
 
 interface CalendarEvent {
@@ -19,7 +21,7 @@ interface GoogleCalendarTokens {
 }
 
 export class GoogleCalendarService {
-  private oauth2Client: any;
+  private oauth2Client: OAuth2Client;
 
   constructor() {
     this.oauth2Client = new google.auth.OAuth2(
@@ -57,7 +59,7 @@ export class GoogleCalendarService {
     });
 
     const { credentials } = await this.oauth2Client.refreshAccessToken();
-    return credentials.access_token;
+    return credentials.access_token as string;
   }
 
   // Set credentials for API calls
@@ -69,7 +71,7 @@ export class GoogleCalendarService {
   async createEvent(
     userTokens: GoogleCalendarTokens,
     eventDetails: CalendarEvent
-  ): Promise<any> {
+  ): Promise<calendar_v3.Schema$Event> {
     try {
       // Set up OAuth client with user's tokens
       this.setCredentials(userTokens);
@@ -108,7 +110,7 @@ export class GoogleCalendarService {
       console.error('Error creating calendar event:', error);
       
       // If token is expired, try to refresh
-      if (error.code === 401 && userTokens.refresh_token) {
+      if (this.isGoogleApiError(error) && error.code === 401 && userTokens.refresh_token) {
         try {
           const newAccessToken = await this.refreshAccessToken(userTokens.refresh_token);
           
@@ -129,6 +131,11 @@ export class GoogleCalendarService {
       
       throw error;
     }
+  }
+
+  // Type guard for Google API errors
+  private isGoogleApiError(error: unknown): error is { code: number; message: string } {
+    return typeof error === 'object' && error !== null && 'code' in error;
   }
 
   // Get user's calendar tokens from database
