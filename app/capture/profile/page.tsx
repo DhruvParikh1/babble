@@ -10,12 +10,14 @@ import {
   FileText,
   Zap,
   ExternalLink,
-  Plus
+  Plus,
+  CheckCircle
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { GoogleCalendarButton } from "@/components/google-calendar-button";
 
 export default async function ProfilePage() {
   const supabase = await createClient();
@@ -25,6 +27,15 @@ export default async function ProfilePage() {
     redirect("/auth/login");
   }
 
+  // Get user profile with Google Calendar status
+  const { data: userProfile } = await supabase
+    .from('user_profiles')
+    .select('google_calendar_connected')
+    .eq('user_id', data.user.id)
+    .single();
+
+  const isGoogleCalendarConnected = userProfile?.google_calendar_connected || false;
+
   const integrations = [
     // Calendar & Scheduling
     {
@@ -32,8 +43,9 @@ export default async function ProfilePage() {
       description: "Auto-create calendar events from voice notes like 'Meeting with Sarah tomorrow at 3pm'",
       icon: "📅",
       category: "Calendar & Scheduling",
-      status: "coming-soon",
-      popular: true
+      status: "available",
+      popular: true,
+      connected: isGoogleCalendarConnected
     },
     {
       name: "Apple Calendar",
@@ -162,14 +174,18 @@ export default async function ProfilePage() {
     }
   ];
 
-  const getStatusBadge = (status: string) => {
+  const getStatusBadge = (status: string, connected?: boolean) => {
+    if (connected) {
+      return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Connected</Badge>;
+    }
+    
     switch (status) {
+      case "available":
+        return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Available</Badge>;
       case "coming-soon":
-        return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Coming Soon</Badge>;
+        return <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">Coming Soon</Badge>;
       case "planned":
         return <Badge variant="outline" className="text-gray-600">Planned</Badge>;
-      case "available":
-        return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Available</Badge>;
       default:
         return null;
     }
@@ -236,6 +252,23 @@ export default async function ProfilePage() {
           </CardContent>
         </Card>
 
+        {/* Google Calendar Quick Status */}
+        {isGoogleCalendarConnected && (
+          <Card className="border-green-200 bg-green-50/50">
+            <CardContent className="pt-6">
+              <div className="flex items-center gap-3">
+                <CheckCircle className="w-5 h-5 text-green-600" />
+                <div className="flex-1">
+                  <h3 className="font-medium text-green-900">Google Calendar Connected</h3>
+                  <p className="text-sm text-green-700">
+                    Voice notes with calendar events will automatically create Google Calendar entries!
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Enhanced Integrations */}
         <Card>
           <CardHeader>
@@ -257,7 +290,11 @@ export default async function ProfilePage() {
                   {items.map((integration) => (
                     <div
                       key={integration.name}
-                      className="flex items-start gap-3 p-3 bg-gray-50/50 rounded-lg border border-gray-100 hover:bg-gray-50 transition-colors"
+                      className={`flex items-start gap-3 p-3 rounded-lg border transition-colors ${
+                        integration.connected 
+                          ? 'bg-green-50/50 border-green-200 hover:bg-green-50' 
+                          : 'bg-gray-50/50 border-gray-100 hover:bg-gray-50'
+                      }`}
                     >
                       <div className="text-2xl flex-shrink-0 mt-0.5">
                         {integration.icon}
@@ -272,22 +309,35 @@ export default async function ProfilePage() {
                               Popular
                             </Badge>
                           )}
-                          {getStatusBadge(integration.status)}
+                          {getStatusBadge(integration.status, integration.connected)}
                         </div>
                         <p className="text-xs text-gray-600 leading-relaxed">
                           {integration.description}
                         </p>
+                        {integration.connected && (
+                          <p className="text-xs text-green-600 mt-1 font-medium">
+                            ✓ Ready to use in voice notes
+                          </p>
+                        )}
                       </div>
-                      {integration.status === "available" ? (
-                        <Button size="sm" variant="outline" className="flex-shrink-0">
-                          <ExternalLink className="w-3 h-3 mr-1" />
-                          Connect
-                        </Button>
-                      ) : (
-                        <Button size="sm" variant="ghost" disabled className="flex-shrink-0 text-gray-400">
-                          Soon
-                        </Button>
-                      )}
+                      
+                      <div className="flex-shrink-0">
+                        {integration.name === "Google Calendar" ? (
+                          <GoogleCalendarButton 
+                            isConnected={integration.connected || false}
+                            userId={data.user.id}
+                          />
+                        ) : integration.status === "available" ? (
+                          <Button size="sm" variant="outline" className="flex-shrink-0">
+                            <ExternalLink className="w-3 h-3 mr-1" />
+                            Connect
+                          </Button>
+                        ) : (
+                          <Button size="sm" variant="ghost" disabled className="flex-shrink-0 text-gray-400">
+                            Soon
+                          </Button>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>

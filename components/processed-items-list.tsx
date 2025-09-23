@@ -21,7 +21,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 interface ProcessedItem {
   id: string;
   content: string;
-  item_type: 'reminder' | 'task' | 'note' | 'contact_action';
+  item_type: 'reminder' | 'task' | 'note' | 'contact_action' | 'calendar_event';
   category_name: string;
   category_id: string;
   due_date: string | null;

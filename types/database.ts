@@ -105,6 +105,8 @@ export type Database = {
           display_name: string | null
           google_calendar_connected: boolean
           google_calendar_refresh_token: string | null
+          google_calendar_access_token: string | null
+          google_calendar_token_expiry: number | null
           created_at: string
           updated_at: string
         }
@@ -114,6 +116,8 @@ export type Database = {
           display_name?: string | null
           google_calendar_connected?: boolean
           google_calendar_refresh_token?: string | null
+          google_calendar_access_token?: string | null
+          google_calendar_token_expiry?: number | null
           created_at?: string
           updated_at?: string
         }
@@ -123,6 +127,8 @@ export type Database = {
           display_name?: string | null
           google_calendar_connected?: boolean
           google_calendar_refresh_token?: string | null
+          google_calendar_access_token?: string | null
+          google_calendar_token_expiry?: number | null
           created_at?: string
           updated_at?: string
         }

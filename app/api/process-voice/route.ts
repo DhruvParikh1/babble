@@ -45,10 +45,10 @@ export async function POST(request: NextRequest) {
 
       const categoryNames = existingCategories?.map(cat => cat.name) || [];
 
-      // Step 3: Process with OpenAI (pass current date, existing categories, and timezone)
+      // Step 3: Process with OpenAI (pass current date, existing categories, timezone, and userId)
       const currentDate = new Date().toISOString();
       const userTimezone = 'America/New_York'; // Norfolk, Virginia timezone
-      const processedItems = await processVoiceNote(transcript, categoryNames, currentDate, userTimezone);
+      const processedItems = await processVoiceNote(transcript, categoryNames, currentDate, userTimezone, userId);
 
       const createdItems = [];
 
